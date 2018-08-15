@@ -4,17 +4,15 @@ public class Employee {
 
 	private Long id;
 	private String name;
-	private String position;
 	private Long departmentId;
 
 	public Employee() {
 
 	}
 
-	public Employee(String name, String position, Long departmentId) {
+	public Employee(String name, Long departmentId) {
 		super();
 		this.name = name;
-		this.position = position;
 		this.departmentId = departmentId;
 	}
 
@@ -34,14 +32,6 @@ public class Employee {
 		this.name = name;
 	}
 
-	public String getPosition() {
-		return position;
-	}
-
-	public void setPosition(String position) {
-		this.position = position;
-	}
-
 	public Long getDepartmentId() {
 		return departmentId;
 	}
@@ -52,7 +42,7 @@ public class Employee {
 
 	@Override
 	public String toString() {
-		return "Employee [id=" + id + ", name=" + name + ", position=" + position + "]";
+		return "Employee [id=" + id + ", name=" + name + "]";
 	}
 
 }

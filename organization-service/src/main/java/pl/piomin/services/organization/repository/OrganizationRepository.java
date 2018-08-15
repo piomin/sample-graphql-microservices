@@ -28,4 +28,16 @@ public class OrganizationRepository {
 		return organizations;
 	}
 	
+	public boolean delete(Long id) {
+		return organizations.removeIf(it -> it.getId() == id.longValue());
+	}
+	
+	public Organization update(Long id, Organization organization) {
+		organization.setId(id);
+		int index = organizations.indexOf(organization);
+		organizations.set(index, organization);
+		return organization;
+	}
+	
+	
 }
