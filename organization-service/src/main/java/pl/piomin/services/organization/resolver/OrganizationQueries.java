@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 
-import pl.piomin.services.department.client.EmployeeClient;
-import pl.piomin.services.department.model.Department;
 import pl.piomin.services.organization.model.Organization;
 import pl.piomin.services.organization.repository.OrganizationRepository;
 
@@ -20,7 +18,7 @@ public class OrganizationQueries implements GraphQLQueryResolver {
 	private static final Logger LOGGER = LoggerFactory.getLogger(OrganizationQueries.class);
 	
 	@Autowired
-	EmployeeClient employeeClient;
+	pl.piomin.services.organization.client.EmployeeClient employeeClient;
 	@Autowired
 	OrganizationRepository repository;
 	
@@ -29,22 +27,11 @@ public class OrganizationQueries implements GraphQLQueryResolver {
 		return repository.findAll();
 	}
 	
-	public List<Department> departmentsByOrganization(Long organizationId) {
-		LOGGER.info("Departments find: organizationId={}", organizationId);
-		return repository.findByOrganization(organizationId);
-	}
-
-	public List<Department> departmentsByOrganizationWithEmployees(Long organizationId) {
-		LOGGER.info("Departments find: organizationId={}", organizationId);
-		List<Department> departments = repository.findByOrganization(organizationId);
-		for (int i = 0; i < departments.size(); i++) {
-			try {
-				departments.get(i).setEmployees(employeeClient.findByDepartment(departments.get(i).getId()));
-			} catch (InterruptedException e) {
-				LOGGER.error("Error calling employee-service", e);
-			}
-		}
-		return departments;
+	public Organization organizationByIdWithEmployees(Long id) throws InterruptedException {
+		LOGGER.info("Organizations find: id={}", id);
+		Organization organization = repository.findById(id);
+		organization.setEmployees(employeeClient.findByOrganization(id));
+		return organization;
 	}
 	
 	public Organization organization(Long id) {

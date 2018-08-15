@@ -10,6 +10,13 @@ public class Employee {
 
 	}
 
+	public Employee(Long id, String name, Long departmentId) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.departmentId = departmentId;
+	}
+
 	public Employee(String name, Long departmentId) {
 		super();
 		this.name = name;

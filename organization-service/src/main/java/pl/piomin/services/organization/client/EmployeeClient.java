@@ -52,7 +52,33 @@ public class EmployeeClient {
 			@Override
 			public void onResponse(Response<EmployeesByDepartmentQuery.Data> res) {
 				LOGGER.info("Res: {}", res);
-				employees.addAll(res.data().employeesByDepartment().stream().map(emp -> new Employee(Long.valueOf(emp.id()), emp.name())).collect(Collectors.toList()));
+				employees.addAll(res.data().employeesByDepartment().stream().map(emp -> new Employee(Long.valueOf(emp.id()), emp.name(), null)).collect(Collectors.toList()));
+				lock.countDown();
+			}
+
+		});
+		lock.await(TIMEOUT, TimeUnit.MILLISECONDS);
+		return employees;
+	}
+	
+	public List<Employee> findByOrganization(Long organizationId) throws InterruptedException {
+		List<Employee> employees = new ArrayList<>();
+		Application app = discoveryClient.getApplication(SERVICE_NAME);
+		InstanceInfo ii = app.getInstances().get(r.nextInt(app.size()));
+		ApolloClient client = ApolloClient.builder().serverUrl(String.format(SERVER_URL, ii.getPort())).build();
+		CountDownLatch lock = new CountDownLatch(1);
+		client.query(EmployeesByOrganizationQuery.builder().organizationId(organizationId.intValue()).build()).enqueue(new Callback<EmployeesByOrganizationQuery.Data>() {
+
+			@Override
+			public void onFailure(ApolloException ex) {
+				LOGGER.info("Err: {}", ex);
+				lock.countDown();
+			}
+
+			@Override
+			public void onResponse(Response<EmployeesByOrganizationQuery.Data> res) {
+				LOGGER.info("Res: {}", res);
+				employees.addAll(res.data().employeesByOrganization().stream().map(emp -> new Employee(Long.valueOf(emp.id()), emp.name(), null)).collect(Collectors.toList()));
 				lock.countDown();
 			}
 
