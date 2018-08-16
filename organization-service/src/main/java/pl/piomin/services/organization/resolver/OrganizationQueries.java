@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 
+import pl.piomin.services.organization.client.EmployeeClient;
 import pl.piomin.services.organization.model.Organization;
 import pl.piomin.services.organization.repository.OrganizationRepository;
 
@@ -18,7 +19,7 @@ public class OrganizationQueries implements GraphQLQueryResolver {
 	private static final Logger LOGGER = LoggerFactory.getLogger(OrganizationQueries.class);
 	
 	@Autowired
-	pl.piomin.services.organization.client.EmployeeClient employeeClient;
+	EmployeeClient employeeClient;
 	@Autowired
 	OrganizationRepository repository;
 	
