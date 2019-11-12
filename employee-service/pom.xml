@@ -67,7 +67,7 @@
 		<dependency>
 			<groupId>com.apollographql.apollo</groupId>
 			<artifactId>apollo-runtime</artifactId>
-		    <version>1.0.1-SNAPSHOT</version>
+		    <version>1.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -83,5 +83,13 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>jcenter</id>
+			<name>jcenter</name>
+			<url>http://jcenter.bintray.com</url>
+		</repository>
+	</repositories>
 
 </project>
