@@ -82,6 +82,30 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>com.github.aoudiamoncef</groupId>
+				<artifactId>apollo-client-maven-plugin</artifactId>
+				<version>5.0.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<services>
+								<departments-api>
+									<compilationUnit>
+										<name>departments</name>
+										<compilerParams>
+											<schemaPackageName>pl.piomin.services.department.client</schemaPackageName>
+										</compilerParams>
+									</compilationUnit>
+								</departments-api>
+							</services>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
