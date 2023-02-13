@@ -164,9 +164,14 @@ public final class EmployeesByOrganizationQuery implements Query<EmployeesByOrga
         public void marshal(ResponseWriter writer) {
           writer.writeList($responseFields[0], employeesByOrganization, new ResponseWriter.ListWriter() {
             @Override
-            public void write(Object value, ResponseWriter.ListItemWriter listItemWriter) {
-              listItemWriter.writeObject(((EmployeesByOrganization) value).marshaller());
+            public void write(@Nullable List list, @NotNull ResponseWriter.ListItemWriter listItemWriter) {
+              listItemWriter.writeObject(((EmployeesByOrganization) list).marshaller());
             }
+
+//            @Override
+//            public void write(Object value, ResponseWriter.ListItemWriter listItemWriter) {
+//              listItemWriter.writeObject(((EmployeesByOrganization) value).marshaller());
+//            }
           });
         }
       };

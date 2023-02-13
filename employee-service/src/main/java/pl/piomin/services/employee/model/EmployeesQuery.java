@@ -114,10 +114,15 @@ public final class EmployeesQuery implements Query<EmployeesQuery.Data, Employee
         @Override
         public void marshal(ResponseWriter writer) {
           writer.writeList($responseFields[0], employees, new ResponseWriter.ListWriter() {
+
             @Override
-            public void write(Object value, ResponseWriter.ListItemWriter listItemWriter) {
-              listItemWriter.writeObject(((Employee) value).marshaller());
+            public void write(@Nullable List list, @NotNull ResponseWriter.ListItemWriter listItemWriter) {
+              listItemWriter.writeObject(((Employee) list).marshaller());
             }
+
+//            public void write(Object value, ResponseWriter.ListItemWriter listItemWriter) {
+//              listItemWriter.writeObject(((Employee) value).marshaller());
+//            }
           });
         }
       };
