@@ -167,7 +167,7 @@ public final class EmployeesByDepartmentQuery implements Query<EmployeesByDepart
           writer.writeList($responseFields[0], employeesByDepartment, new ResponseWriter.ListWriter() {
             @Override
             public void write(@Nullable List list, @NotNull ResponseWriter.ListItemWriter listItemWriter) {
-              listItemWriter.writeObject(((EmployeesByDepartment) list).marshaller());
+              listItemWriter.writeList(list, this);
             }
 
 //            @Override

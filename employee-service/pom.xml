@@ -53,6 +53,16 @@
 		    <version>1.0.1</version>
 		</dependency>
 		<dependency>
+			<groupId>com.apollographql.apollo3</groupId>
+			<artifactId>apollo-api-jvm</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.apollographql.apollo3</groupId>
+			<artifactId>apollo-runtime-jvm</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 		</dependency>
@@ -63,6 +73,30 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>com.github.aoudiamoncef</groupId>
+				<artifactId>apollo-client-maven-plugin</artifactId>
+				<version>5.0.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<services>
+								<employees-api>
+									<compilationUnit>
+										<name>employees</name>
+										<compilerParams>
+											<schemaPackageName>pl.piomin.services.employee.client</schemaPackageName>
+										</compilerParams>
+									</compilationUnit>
+								</employees-api>
+							</services>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

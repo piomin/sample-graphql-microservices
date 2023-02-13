@@ -117,7 +117,7 @@ public final class EmployeesQuery implements Query<EmployeesQuery.Data, Employee
 
             @Override
             public void write(@Nullable List list, @NotNull ResponseWriter.ListItemWriter listItemWriter) {
-              listItemWriter.writeObject(((Employee) list).marshaller());
+              listItemWriter.writeList(list, this);
             }
 
 //            public void write(Object value, ResponseWriter.ListItemWriter listItemWriter) {
