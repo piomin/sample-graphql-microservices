@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.coxautodev.graphql.tools.GraphQLMutationResolver;
+import graphql.kickstart.tools.GraphQLMutationResolver;
 
 import pl.piomin.services.organization.model.Organization;
 import pl.piomin.services.organization.repository.OrganizationRepository;

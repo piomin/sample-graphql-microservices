@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.0.RELEASE</version>
+		<version>2.7.18</version>
 		<relativePath />
 	</parent>
 
@@ -15,7 +15,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>17</java.version>
 		<sonar.projectKey>piomin_sample-graphql-microservices</sonar.projectKey>
 		<sonar.organization>piomin</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -33,7 +33,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>Finchley.SR1</version>
+				<version>2021.0.9</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

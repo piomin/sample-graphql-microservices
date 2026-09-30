@@ -23,10 +23,6 @@
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-openfeign-core</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
@@ -35,29 +31,24 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.graphql-java</groupId>
+			<groupId>com.graphql-java-kickstart</groupId>
 			<artifactId>graphql-spring-boot-starter</artifactId>
-			<version>5.0.2</version>
+			<version>15.1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.graphql-java</groupId>
+			<groupId>com.graphql-java-kickstart</groupId>
 			<artifactId>graphiql-spring-boot-starter</artifactId>
-			<version>5.0.2</version>
+			<version>11.1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.graphql-java</groupId>
+			<groupId>com.graphql-java-kickstart</groupId>
 			<artifactId>voyager-spring-boot-starter</artifactId>
-			<version>5.0.2</version>
+			<version>11.1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.graphql-java</groupId>
-			<artifactId>graphql-java</artifactId>
-			<version>9.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.graphql-java</groupId>
+			<groupId>com.graphql-java-kickstart</groupId>
 			<artifactId>graphql-java-tools</artifactId>
-			<version>5.2.3</version>
+			<version>13.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -69,14 +60,14 @@
 			<version>1.0.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.apollographql.apollo3</groupId>
-			<artifactId>apollo-api-jvm</artifactId>
-			<version>3.0.0</version>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<version>24.1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.apollographql.apollo3</groupId>
-			<artifactId>apollo-runtime-jvm</artifactId>
-			<version>3.0.0</version>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>1.3.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -90,48 +81,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>com.github.aoudiamoncef</groupId>
-				<artifactId>apollo-client-maven-plugin</artifactId>
-				<version>5.0.0</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<services>
-								<departments-api>
-									<compilationUnit>
-										<name>departments</name>
-										<compilerParams>
-											<schemaPackageName>pl.piomin.services.department.client</schemaPackageName>
-										</compilerParams>
-									</compilationUnit>
-								</departments-api>
-							</services>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>target/generated-sources/apollo/departments</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
