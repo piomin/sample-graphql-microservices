@@ -16,6 +16,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
 		<sonar.projectKey>piomin_sample-graphql-microservices</sonar.projectKey>
 		<sonar.organization>piomin</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
