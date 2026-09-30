@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>com.graphql-java-kickstart</groupId>
 			<artifactId>graphql-spring-boot-starter</artifactId>
-			<version>15.1.0</version>
+			<version>14.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.graphql-java-kickstart</groupId>
@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>com.graphql-java-kickstart</groupId>
 			<artifactId>graphql-java-tools</artifactId>
-			<version>13.1.1</version>
+			<version>13.0.2</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.springframework.cloud</groupId>
