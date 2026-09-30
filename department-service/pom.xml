@@ -2,29 +2,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.0.RELEASE</version>
+		<groupId>pl.piomin.services</groupId>
+		<artifactId>sample-graphql-microservices</artifactId>
+		<version>1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>department-service</artifactId>
-	<groupId>pl.piomin.services</groupId>
 	<version>1.0-SNAPSHOT</version>
 
 	<properties>
-		<java.version>1.8</java.version>
+		<sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
 	</properties>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>Finchley.SR1</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -79,7 +66,22 @@
 		<dependency>
 			<groupId>com.apollographql.apollo</groupId>
 			<artifactId>apollo-runtime</artifactId>
-			<version>1.0.0-alpha2</version>
+			<version>1.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.apollographql.apollo3</groupId>
+			<artifactId>apollo-api-jvm</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.apollographql.apollo3</groupId>
+			<artifactId>apollo-runtime-jvm</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -88,6 +90,48 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>com.github.aoudiamoncef</groupId>
+				<artifactId>apollo-client-maven-plugin</artifactId>
+				<version>5.0.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<services>
+								<departments-api>
+									<compilationUnit>
+										<name>departments</name>
+										<compilerParams>
+											<schemaPackageName>pl.piomin.services.department.client</schemaPackageName>
+										</compilerParams>
+									</compilationUnit>
+								</departments-api>
+							</services>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>target/generated-sources/apollo/departments</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

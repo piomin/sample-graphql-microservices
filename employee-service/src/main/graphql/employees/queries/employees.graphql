@@ -1,0 +1,10 @@
+query employees {
+  employees {
+    id
+    organizationId
+    departmentId
+    name
+    age
+    position
+  }
+}
