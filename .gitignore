@@ -1,5 +1,4 @@
 /.project
 /.settings/
-target/
-*.iml
-.idea/
+department-service/.factorypath
+*.factorypath

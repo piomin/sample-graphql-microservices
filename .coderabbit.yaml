@@ -1,4 +1,4 @@
 reviews:
   auto_review:
     enabled: true
-    ignore_bots: false
+    ignore_usernames: []
