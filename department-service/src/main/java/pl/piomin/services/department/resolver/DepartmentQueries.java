@@ -37,11 +37,7 @@ public class DepartmentQueries implements GraphQLQueryResolver {
 		LOGGER.info("Departments find: organizationId={}", organizationId);
 		List<Department> departments = repository.findByOrganization(organizationId);
 		for (int i = 0; i < departments.size(); i++) {
-			try {
-				departments.get(i).setEmployees(employeeClient.findByDepartment(departments.get(i).getId()));
-			} catch (InterruptedException e) {
-				LOGGER.error("Error calling employee-service", e);
-			}
+			departments.get(i).setEmployees(employeeClient.findByDepartment(departments.get(i).getId()));
 		}
 		return departments;
 	}

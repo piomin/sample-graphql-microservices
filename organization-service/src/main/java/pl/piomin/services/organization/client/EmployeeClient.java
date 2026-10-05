@@ -1,21 +1,16 @@
 package pl.piomin.services.organization.client;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.graphql.client.HttpGraphQlClient;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import com.apollographql.apollo.ApolloCall.Callback;
-import com.apollographql.apollo.ApolloClient;
-import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.exception.ApolloException;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
 import com.netflix.discovery.shared.Application;
@@ -24,67 +19,78 @@ import pl.piomin.services.organization.model.Employee;
 
 @Component
 public class EmployeeClient {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeClient.class);
-	private static final int TIMEOUT = 5000;
-	private static final String SERVICE_NAME = "EMPLOYEE-SERVICE"; 
+	private static final String SERVICE_NAME = "EMPLOYEE-SERVICE";
 	private static final String SERVER_URL = "http://localhost:%d/graphql";
-	
+
+	private static final String QUERY_BY_DEPARTMENT = """
+			query EmployeesByDepartment($departmentId: Int!) {
+			  employeesByDepartment(departmentId: $departmentId) {
+			    id
+			    name
+			  }
+			}
+			""";
+
+	private static final String QUERY_BY_ORGANIZATION = """
+			query EmployeesByOrganization($organizationId: Int!) {
+			  employeesByOrganization(organizationId: $organizationId) {
+			    id
+			    name
+			  }
+			}
+			""";
+
 	Random r = new Random();
-	
+
 	@Autowired
 	private EurekaClient discoveryClient;
-	
-	public List<Employee> findByDepartment(Long departmentId) throws InterruptedException {
-		List<Employee> employees = new ArrayList<>();
+
+	public List<Employee> findByDepartment(Long departmentId) {
 		Application app = discoveryClient.getApplication(SERVICE_NAME);
 		InstanceInfo ii = app.getInstances().get(r.nextInt(app.size()));
-		ApolloClient client = ApolloClient.builder().serverUrl(String.format(SERVER_URL, ii.getPort())).build();
-		CountDownLatch lock = new CountDownLatch(1);
-		client.query(EmployeesByDepartmentQuery.builder().departmentId(departmentId.intValue()).build()).enqueue(new Callback<EmployeesByDepartmentQuery.Data>() {
+		String url = String.format(SERVER_URL, ii.getPort());
 
-			@Override
-			public void onFailure(ApolloException ex) {
-				LOGGER.info("Err: {}", ex);
-				lock.countDown();
-			}
+		HttpGraphQlClient client = HttpGraphQlClient.builder(
+				WebClient.builder().baseUrl(url).build())
+				.build();
 
-			@Override
-			public void onResponse(Response<EmployeesByDepartmentQuery.Data> res) {
-				LOGGER.info("Res: {}", res);
-				employees.addAll(res.data().employeesByDepartment().stream().map(emp -> new Employee(Long.valueOf(emp.id()), emp.name(), null)).collect(Collectors.toList()));
-				lock.countDown();
-			}
+		List<Employee> employees = client.document(QUERY_BY_DEPARTMENT)
+				.variable("departmentId", departmentId.intValue())
+				.retrieve("employeesByDepartment")
+				.toEntityList(Employee.class)
+				.doOnNext(list -> LOGGER.info("Res: {}", list))
+				.onErrorResume(ex -> {
+					LOGGER.error("Err: {}", ex.getMessage());
+					return reactor.core.publisher.Mono.just(Collections.emptyList());
+				})
+				.block();
 
-		});
-		lock.await(TIMEOUT, TimeUnit.MILLISECONDS);
-		return employees;
+		return employees != null ? employees : Collections.emptyList();
 	}
-	
-	public List<Employee> findByOrganization(Long organizationId) throws InterruptedException {
-		List<Employee> employees = new ArrayList<>();
+
+	public List<Employee> findByOrganization(Long organizationId) {
 		Application app = discoveryClient.getApplication(SERVICE_NAME);
 		InstanceInfo ii = app.getInstances().get(r.nextInt(app.size()));
-		ApolloClient client = ApolloClient.builder().serverUrl(String.format(SERVER_URL, ii.getPort())).build();
-		CountDownLatch lock = new CountDownLatch(1);
-		client.query(EmployeesByOrganizationQuery.builder().organizationId(organizationId.intValue()).build()).enqueue(new Callback<EmployeesByOrganizationQuery.Data>() {
+		String url = String.format(SERVER_URL, ii.getPort());
 
-			@Override
-			public void onFailure(ApolloException ex) {
-				LOGGER.info("Err: {}", ex);
-				lock.countDown();
-			}
+		HttpGraphQlClient client = HttpGraphQlClient.builder(
+				WebClient.builder().baseUrl(url).build())
+				.build();
 
-			@Override
-			public void onResponse(Response<EmployeesByOrganizationQuery.Data> res) {
-				LOGGER.info("Res: {}", res);
-				employees.addAll(res.data().employeesByOrganization().stream().map(emp -> new Employee(Long.valueOf(emp.id()), emp.name(), null)).collect(Collectors.toList()));
-				lock.countDown();
-			}
+		List<Employee> employees = client.document(QUERY_BY_ORGANIZATION)
+				.variable("organizationId", organizationId.intValue())
+				.retrieve("employeesByOrganization")
+				.toEntityList(Employee.class)
+				.doOnNext(list -> LOGGER.info("Res: {}", list))
+				.onErrorResume(ex -> {
+					LOGGER.error("Err: {}", ex.getMessage());
+					return reactor.core.publisher.Mono.just(Collections.emptyList());
+				})
+				.block();
 
-		});
-		lock.await(TIMEOUT, TimeUnit.MILLISECONDS);
-		return employees;
+		return employees != null ? employees : Collections.emptyList();
 	}
-	
+
 }
