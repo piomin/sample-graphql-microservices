@@ -1,18 +1,13 @@
-schema {
-  query: EmployeeQueries
-  mutation: EmployeeMutations
-}
-
-type EmployeeQueries {
+type Query {
   employees: [Employee]
-  employee(id: ID!): Employee!
+  employee(id: ID!): Employee
   employeesByOrganization(organizationId: Int!): [Employee]
   employeesByDepartment(departmentId: Int!): [Employee]
 }
 
-type EmployeeMutations {
+type Mutation {
   newEmployee(employee: EmployeeInput!): Employee
-  deleteEmployee(id: ID!) : Boolean
+  deleteEmployee(id: ID!): Boolean
   updateEmployee(id: ID!, employee: EmployeeInput!): Employee
 }
 
@@ -27,10 +22,10 @@ input EmployeeInput {
 
 type Employee {
   id: ID!
-  organizationId: Int!
-  departmentId: Int!
+  organizationId: Int
+  departmentId: Int
   name: String!
-  age: Int!
+  age: Int
   position: String!
-  salary: Int!
+  salary: Int
 }

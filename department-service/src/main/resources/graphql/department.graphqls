@@ -1,18 +1,13 @@
-schema {
-  query: DepartmentQueries
-  mutation: DepartmentMutations
-}
-
-type DepartmentQueries {
+type Query {
   departments: [Department]
-  department(id: ID!): Department!
+  department(id: ID!): Department
   departmentsByOrganization(organizationId: Int!): [Department]
   departmentsByOrganizationWithEmployees(organizationId: Int!): [Department]
 }
 
-type DepartmentMutations {
+type Mutation {
   newDepartment(department: DepartmentInput!): Department
-  deleteDepartment(id: ID!) : Boolean
+  deleteDepartment(id: ID!): Boolean
   updateDepartment(id: ID!, department: DepartmentInput!): Department
 }
 
@@ -23,7 +18,7 @@ input DepartmentInput {
 
 type Department {
   id: ID!
-  organizationId: Int!
+  organizationId: Int
   name: String!
   employees: [Employee]
 }
@@ -32,5 +27,5 @@ type Employee {
   id: ID!
   name: String!
   position: String!
-  salary: Int!
+  salary: Int
 }

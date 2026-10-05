@@ -1,6 +1,0 @@
-query departmentsByOrganization {
-  departmentsByOrganization(organizationId: 1) {
-    id
-    name
-  }
-}

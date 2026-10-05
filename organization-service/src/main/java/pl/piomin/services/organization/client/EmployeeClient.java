@@ -2,20 +2,17 @@ package pl.piomin.services.organization.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
 
-import com.apollographql.apollo.ApolloCall.Callback;
-import com.apollographql.apollo.ApolloClient;
-import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.exception.ApolloException;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
 import com.netflix.discovery.shared.Application;
@@ -24,67 +21,88 @@ import pl.piomin.services.organization.model.Employee;
 
 @Component
 public class EmployeeClient {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeClient.class);
-	private static final int TIMEOUT = 5000;
-	private static final String SERVICE_NAME = "EMPLOYEE-SERVICE"; 
+	private static final String SERVICE_NAME = "EMPLOYEE-SERVICE";
 	private static final String SERVER_URL = "http://localhost:%d/graphql";
-	
+
 	Random r = new Random();
-	
+
 	@Autowired
 	private EurekaClient discoveryClient;
-	
-	public List<Employee> findByDepartment(Long departmentId) throws InterruptedException {
-		List<Employee> employees = new ArrayList<>();
+
+	public List<Employee> findByDepartment(Long departmentId) {
 		Application app = discoveryClient.getApplication(SERVICE_NAME);
 		InstanceInfo ii = app.getInstances().get(r.nextInt(app.size()));
-		ApolloClient client = ApolloClient.builder().serverUrl(String.format(SERVER_URL, ii.getPort())).build();
-		CountDownLatch lock = new CountDownLatch(1);
-		client.query(EmployeesByDepartmentQuery.builder().departmentId(departmentId.intValue()).build()).enqueue(new Callback<EmployeesByDepartmentQuery.Data>() {
-
-			@Override
-			public void onFailure(ApolloException ex) {
-				LOGGER.info("Err: {}", ex);
-				lock.countDown();
+		String url = String.format(SERVER_URL, ii.getPort());
+		String query = """
+				{ "query": "{ employeesByDepartment(departmentId: %d) { id name } }" }
+				""".formatted(departmentId);
+		RestClient restClient = RestClient.create();
+		try {
+			Map<String, Object> response = restClient.post()
+					.uri(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.body(query)
+					.retrieve()
+					.body(new ParameterizedTypeReference<Map<String, Object>>() {});
+			if (response != null && response.get("data") != null) {
+				@SuppressWarnings("unchecked")
+				List<Map<String, Object>> employeesData = (List<Map<String, Object>>) ((Map<String, Object>) response.get("data")).get("employeesByDepartment");
+				List<Employee> employees = new ArrayList<>();
+				if (employeesData != null) {
+					for (Map<String, Object> emp : employeesData) {
+						Employee employee = new Employee(
+								Long.valueOf(emp.get("id").toString()),
+								(String) emp.get("name"),
+								null
+						);
+						employees.add(employee);
+					}
+				}
+				return employees;
 			}
-
-			@Override
-			public void onResponse(Response<EmployeesByDepartmentQuery.Data> res) {
-				LOGGER.info("Res: {}", res);
-				employees.addAll(res.data().employeesByDepartment().stream().map(emp -> new Employee(Long.valueOf(emp.id()), emp.name(), null)).collect(Collectors.toList()));
-				lock.countDown();
-			}
-
-		});
-		lock.await(TIMEOUT, TimeUnit.MILLISECONDS);
-		return employees;
+		} catch (Exception e) {
+			LOGGER.error("Error calling employee-service", e);
+		}
+		return new ArrayList<>();
 	}
-	
-	public List<Employee> findByOrganization(Long organizationId) throws InterruptedException {
-		List<Employee> employees = new ArrayList<>();
+
+	public List<Employee> findByOrganization(Long organizationId) {
 		Application app = discoveryClient.getApplication(SERVICE_NAME);
 		InstanceInfo ii = app.getInstances().get(r.nextInt(app.size()));
-		ApolloClient client = ApolloClient.builder().serverUrl(String.format(SERVER_URL, ii.getPort())).build();
-		CountDownLatch lock = new CountDownLatch(1);
-		client.query(EmployeesByOrganizationQuery.builder().organizationId(organizationId.intValue()).build()).enqueue(new Callback<EmployeesByOrganizationQuery.Data>() {
-
-			@Override
-			public void onFailure(ApolloException ex) {
-				LOGGER.info("Err: {}", ex);
-				lock.countDown();
+		String url = String.format(SERVER_URL, ii.getPort());
+		String query = """
+				{ "query": "{ employeesByOrganization(organizationId: %d) { id name } }" }
+				""".formatted(organizationId);
+		RestClient restClient = RestClient.create();
+		try {
+			Map<String, Object> response = restClient.post()
+					.uri(url)
+					.contentType(MediaType.APPLICATION_JSON)
+					.body(query)
+					.retrieve()
+					.body(new ParameterizedTypeReference<Map<String, Object>>() {});
+			if (response != null && response.get("data") != null) {
+				@SuppressWarnings("unchecked")
+				List<Map<String, Object>> employeesData = (List<Map<String, Object>>) ((Map<String, Object>) response.get("data")).get("employeesByOrganization");
+				List<Employee> employees = new ArrayList<>();
+				if (employeesData != null) {
+					for (Map<String, Object> emp : employeesData) {
+						Employee employee = new Employee(
+								Long.valueOf(emp.get("id").toString()),
+								(String) emp.get("name"),
+								null
+						);
+						employees.add(employee);
+					}
+				}
+				return employees;
 			}
-
-			@Override
-			public void onResponse(Response<EmployeesByOrganizationQuery.Data> res) {
-				LOGGER.info("Res: {}", res);
-				employees.addAll(res.data().employeesByOrganization().stream().map(emp -> new Employee(Long.valueOf(emp.id()), emp.name(), null)).collect(Collectors.toList()));
-				lock.countDown();
-			}
-
-		});
-		lock.await(TIMEOUT, TimeUnit.MILLISECONDS);
-		return employees;
+		} catch (Exception e) {
+			LOGGER.error("Error calling employee-service", e);
+		}
+		return new ArrayList<>();
 	}
-	
+
 }

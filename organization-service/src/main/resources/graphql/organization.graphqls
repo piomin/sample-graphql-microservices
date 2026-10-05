@@ -1,19 +1,14 @@
-schema {
-  query: OrganizationQueries
-  mutation: OrganizationMutations
-}
-
-type OrganizationQueries {
+type Query {
   organizations: [Organization]
-  organization(id: ID!): Organization!
+  organization(id: ID!): Organization
   organizationByIdWithEmployees(id: Int!): Organization
   organizationByIdWithDepartments(id: Int!): Organization
   organizationByIdWithDepartmentsAndEmployees(id: Int!): Organization
 }
 
-type OrganizationMutations {
+type Mutation {
   newOrganization(organization: OrganizationInput!): Organization
-  deleteOrganization(id: ID!) : Boolean
+  deleteOrganization(id: ID!): Boolean
   updateOrganization(id: ID!, organization: OrganizationInput!): Organization
 }
 
@@ -25,7 +20,7 @@ input OrganizationInput {
 type Organization {
   id: ID!
   name: String!
-  address: String!
+  address: String
   employees: [Employee]
   departments: [Department]
 }
@@ -39,5 +34,5 @@ type Department {
 type Employee {
   id: ID!
   name: String!
-  position: String!
+  position: String
 }
