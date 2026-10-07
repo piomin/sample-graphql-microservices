@@ -38,9 +38,9 @@ public class EmployeeClient {
 		String query = """
 				{ "query": "{ employeesByDepartment(departmentId: %d) { id name position salary } }" }
 				""".formatted(departmentId);
-		RestClient restClient = RestClient.create();
+		var restClient = RestClient.create();
 		try {
-			Map<String, Object> response = restClient.post()
+			var response = restClient.post()
 					.uri(url)
 					.contentType(MediaType.APPLICATION_JSON)
 					.body(query)
@@ -48,7 +48,7 @@ public class EmployeeClient {
 					.body(new ParameterizedTypeReference<Map<String, Object>>() {});
 			if (response != null && response.get("data") != null) {
 				@SuppressWarnings("unchecked")
-				List<Map<String, Object>> employeesData = (List<Map<String, Object>>) ((Map<String, Object>) response.get("data")).get("employeesByDepartment");
+				var employeesData = (List<Map<String, Object>>) ((Map<String, Object>) response.get("data")).get("employeesByDepartment");
 				List<Employee> employees = new ArrayList<>();
 				if (employeesData != null) {
 					for (Map<String, Object> emp : employeesData) {
