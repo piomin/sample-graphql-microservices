@@ -1,19 +1,17 @@
 package pl.piomin.services.employee;
 
-import com.apollographql.apollo.ApolloCall.Callback;
-import com.apollographql.apollo.ApolloClient;
-import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.exception.ApolloException;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import pl.piomin.services.employee.model.EmployeesQuery;
-import pl.piomin.services.employee.model.EmployeesQuery.Data;
+import org.springframework.graphql.client.HttpGraphQlClient;
+import org.springframework.web.reactive.function.client.WebClient;
+import pl.piomin.services.employee.model.Employee;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class EmployeeApiTest {
@@ -22,27 +20,32 @@ public class EmployeeApiTest {
 	int port;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeApiTest.class);
-	
-	private CountDownLatch lock = new CountDownLatch(1);
-	
+
+	private static final String QUERY_EMPLOYEES = """
+			query EmployeesQuery {
+			  employees {
+			    name
+			    age
+			  }
+			}
+			""";
+
 	@Test
-	public void testClient() throws InterruptedException {
-		ApolloClient client = ApolloClient.builder().serverUrl("http://localhost:" + port + "/graphql").build();
-		client.query(EmployeesQuery.builder().build()).enqueue(new Callback<EmployeesQuery.Data>() {
+	public void testClient() {
+		HttpGraphQlClient client = HttpGraphQlClient.builder(
+				WebClient.builder()
+						.baseUrl("http://localhost:" + port + "/graphql")
+						.build())
+				.build();
 
-			@Override
-			public void onFailure(ApolloException arg0) {
-				LOGGER.error("Error", arg0);
-				lock.countDown();
-			}
+		List<Employee> employees = client.document(QUERY_EMPLOYEES)
+				.retrieve("employees")
+				.toEntityList(Employee.class)
+				.doOnNext(list -> LOGGER.info("Res: {}", list))
+				.block();
 
-			@Override
-			public void onResponse(Response<Data> res) {
-				LOGGER.info("Res: {}", res.data().employees());
-				lock.countDown();
-			}
-		});
-		lock.await(10000, TimeUnit.MILLISECONDS);
+		assertThat(employees).isNotNull();
+		LOGGER.info("Employees count: {}", employees.size());
 	}
-	
+
 }

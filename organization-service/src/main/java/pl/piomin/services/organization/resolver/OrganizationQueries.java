@@ -28,7 +28,7 @@ public class OrganizationQueries implements GraphQLQueryResolver {
 		return repository.findAll();
 	}
 	
-	public Organization organizationByIdWithEmployees(Long id) throws InterruptedException {
+	public Organization organizationByIdWithEmployees(Long id) {
 		LOGGER.info("Organizations find: id={}", id);
 		Organization organization = repository.findById(id);
 		organization.setEmployees(employeeClient.findByOrganization(id));
