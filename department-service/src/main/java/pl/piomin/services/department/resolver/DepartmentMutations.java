@@ -3,34 +3,37 @@ package pl.piomin.services.department.resolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import graphql.kickstart.tools.GraphQLMutationResolver;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.stereotype.Controller;
 
 import pl.piomin.services.department.model.Department;
 import pl.piomin.services.department.repository.DepartmentRepository;
 
-@Component
-public class DepartmentMutations implements GraphQLMutationResolver {
+@Controller
+public class DepartmentMutations {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DepartmentQueries.class);
-	
+	private static final Logger LOGGER = LoggerFactory.getLogger(DepartmentMutations.class);
+
 	@Autowired
 	DepartmentRepository repository;
-	
-	public Department newDepartment(Department department) {
+
+	@MutationMapping
+	public Department newDepartment(@Argument Department department) {
 		LOGGER.info("Department add: department={}", department);
 		return repository.add(department);
 	}
-	
-	public boolean deleteDepartment(Long id) {
+
+	@MutationMapping
+	public boolean deleteDepartment(@Argument Long id) {
 		LOGGER.info("Department delete: id={}", id);
 		return repository.delete(id);
 	}
-	
-	public Department updateDepartment(Long id, Department department) {
+
+	@MutationMapping
+	public Department updateDepartment(@Argument Long id, @Argument Department department) {
 		LOGGER.info("Department update: id={}, department={}", id, department);
 		return repository.update(id, department);
 	}
-	
+
 }
